@@ -2,7 +2,9 @@
 <html lang="si">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>සුභ අලුත් අවුරුද්දක්!</title>
+
     <style>
         body {
             margin: 0;
@@ -14,8 +16,17 @@
             justify-content: center;
             align-items: center;
 
-            background: black;
+            background: linear-gradient(270deg, #ff7e5f, #feb47b, #ffcc70, #ff8177);
+            background-size: 600% 600%;
+            animation: gradientMove 10s ease infinite;
+
             color: white;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         canvas {
@@ -27,20 +38,24 @@
         .card {
             position: relative;
             z-index: 1;
-            background: rgba(0,0,0,0.5);
-            padding: 40px;
+            background: rgba(0,0,0,0.6);
+            padding: 25px;
             border-radius: 20px;
             text-align: center;
+            width: 90%;
+            max-width: 400px;
+
             animation: fadeIn 2s ease, float 3s ease-in-out infinite;
-            box-shadow: 0 0 25px rgba(255,255,255,0.6);
+            box-shadow: 0 0 30px rgba(255,255,255,0.8);
         }
 
         h1 {
-            font-size: 42px;
+            font-size: clamp(24px, 6vw, 42px);
+            text-shadow: 0 0 10px #fff;
         }
 
         p {
-            font-size: 20px;
+            font-size: clamp(14px, 4vw, 20px);
         }
 
         @keyframes fadeIn {
@@ -54,6 +69,7 @@
         }
     </style>
 </head>
+
 <body>
 
 <canvas id="fireworks"></canvas>
@@ -69,8 +85,12 @@
 const canvas = document.getElementById("fireworks");
 const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
 let particles = [];
 
@@ -108,22 +128,26 @@ function animate() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     updateParticles();
-
     requestAnimationFrame(animate);
 }
 
-// Auto fireworks
+// 🎆 Auto fireworks
 setInterval(() => {
     createFirework(
         Math.random() * canvas.width,
         Math.random() * canvas.height / 2
     );
-}, 800);
+}, 900);
 
-// Click fireworks
-window.addEventListener("click", (e) => {
-    createFirework(e.clientX, e.clientY);
-});
+// 📱 Touch + Click support
+function triggerFirework(e) {
+    let x = e.touches ? e.touches[0].clientX : e.clientX;
+    let y = e.touches ? e.touches[0].clientY : e.clientY;
+    createFirework(x, y);
+}
+
+window.addEventListener("click", triggerFirework);
+window.addEventListener("touchstart", triggerFirework);
 
 animate();
 </script>
